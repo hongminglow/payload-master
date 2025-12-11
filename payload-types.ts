@@ -67,6 +67,10 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    authors: Author;
+    categories: Category;
+    posts: Post;
+    'field-showcase': FieldShowcase;
     'payload-kv': PayloadKv;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
@@ -75,6 +79,10 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    authors: AuthorsSelect<false> | AuthorsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    'field-showcase': FieldShowcaseSelect<false> | FieldShowcaseSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -113,6 +121,176 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "authors".
+ */
+export interface Author {
+  id: number;
+  name: string;
+  bio?: string | null;
+  avatar?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  title: string;
+  description?: string | null;
+  posts?: (number | Post)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  author: number | Author;
+  categories?: (number | Category)[] | null;
+  publishedOn?: string | null;
+  status?: ('draft' | 'published') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Demonstrates various Payload field types and components
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "field-showcase".
+ */
+export interface FieldShowcase {
+  id: number;
+  title: string;
+  /**
+   * Validates email format automatically
+   */
+  email?: string | null;
+  /**
+   * Multi-line text input
+   */
+  description?: string | null;
+  /**
+   * Syntax-highlighted code editor
+   */
+  code?: string | null;
+  /**
+   * Number with min/max validation
+   */
+  quantity?: number | null;
+  /**
+   * Decimal number
+   */
+  price?: number | null;
+  /**
+   * Date picker (day only)
+   */
+  eventDate?: string | null;
+  /**
+   * Date picker with time
+   */
+  eventDateTime?: string | null;
+  /**
+   * Single select dropdown
+   */
+  priority?: ('high' | 'medium' | 'low') | null;
+  /**
+   * Multi-select dropdown
+   */
+  tags?: ('featured' | 'new' | 'sale' | 'popular')[] | null;
+  /**
+   * Radio button group
+   */
+  status?: ('active' | 'inactive' | 'pending') | null;
+  /**
+   * Boolean checkbox
+   */
+  isPublished?: boolean | null;
+  /**
+   * Full-featured Lexical editor with formatting, links, lists, etc.
+   */
+  richContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Raw JSON editor
+   */
+  jsonData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Geographic point coordinates
+   *
+   * @minItems 2
+   * @maxItems 2
+   */
+  point?: [number, number] | null;
+  /**
+   * Repeatable array of items
+   */
+  socialLinks?:
+    | {
+        platform?: ('twitter' | 'linkedin' | 'github') | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Relationship to another collection
+   */
+  relatedAuthor?: (number | null) | Author;
+  /**
+   * Left column
+   */
+  column1?: string | null;
+  /**
+   * Right column
+   */
+  column2?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -161,10 +339,27 @@ export interface User {
  */
 export interface PayloadLockedDocument {
   id: number;
-  document?: {
-    relationTo: 'users';
-    value: number | User;
-  } | null;
+  document?:
+    | ({
+        relationTo: 'authors';
+        value: number | Author;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'field-showcase';
+        value: number | FieldShowcase;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
@@ -206,6 +401,77 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "authors_select".
+ */
+export interface AuthorsSelect<T extends boolean = true> {
+  name?: T;
+  bio?: T;
+  avatar?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  posts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  content?: T;
+  author?: T;
+  categories?: T;
+  publishedOn?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "field-showcase_select".
+ */
+export interface FieldShowcaseSelect<T extends boolean = true> {
+  title?: T;
+  email?: T;
+  description?: T;
+  code?: T;
+  quantity?: T;
+  price?: T;
+  eventDate?: T;
+  eventDateTime?: T;
+  priority?: T;
+  tags?: T;
+  status?: T;
+  isPublished?: T;
+  richContent?: T;
+  jsonData?: T;
+  point?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  relatedAuthor?: T;
+  column1?: T;
+  column2?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
