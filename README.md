@@ -39,7 +39,7 @@ pnpm install
 pnpm run dev
 ```
 
-Visit [http://localhost:3001](http://localhost:3001) (Next prefers 3001 when 3000 is busy) for the dashboard, and [http://localhost:3001/admin](http://localhost:3001/admin) for Payload's admin panel.
+Visit [http://localhost:3000](http://localhost:3000) Next prefers 3000 for the dashboard, and [http://localhost:3000/admin](http://localhost:3000/admin) for Payload's admin panel.
 
 Important: the frontend dashboard reads from the same database as the admin. On a fresh database, you must first visit `/admin` and create some content (e.g. an Author and a Post) before the frontend pages will have data to display.
 
