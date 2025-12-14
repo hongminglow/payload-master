@@ -1,5 +1,6 @@
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
+import { headers } from "next/headers";
 
 // ============================================================================
 // Types for our data (using string | number for id to match Payload types)
@@ -48,6 +49,18 @@ interface GraphQLResponse {
 // Data Fetching Functions
 // ============================================================================
 
+async function getBaseUrlFromRequestHeaders(): Promise<string> {
+  const h = await headers();
+
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (host) {
+    return `${proto}://${host}`;
+  }
+
+  return process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+}
+
 // LOCAL API - Direct database access (most performant)
 async function fetchWithLocalAPI() {
   const payload = await getPayload({ config: configPromise });
@@ -69,9 +82,7 @@ async function fetchWithLocalAPI() {
 }
 
 // GRAPHQL - Query via GraphQL endpoint
-async function fetchWithGraphQL(): Promise<GraphQLResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
-
+async function fetchWithGraphQL(baseUrl: string): Promise<GraphQLResponse> {
   const query = `
     query DashboardData {
       Authors(limit: 10) {
@@ -117,9 +128,7 @@ async function fetchWithGraphQL(): Promise<GraphQLResponse> {
 }
 
 // REST API - Fetch via custom endpoint
-async function fetchPostStats(): Promise<PostStats | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
-
+async function fetchPostStats(baseUrl: string): Promise<PostStats | null> {
   try {
     const response = await fetch(`${baseUrl}/api/posts/stats`, {
       cache: "no-store",
@@ -230,10 +239,29 @@ function SectionHeader({
 // ============================================================================
 
 export default async function PayloadDashboard() {
+  const baseUrl = await getBaseUrlFromRequestHeaders();
+
   // Fetch data using different methods
-  const localData = await fetchWithLocalAPI();
-  const graphqlData = await fetchWithGraphQL();
-  const postStats = await fetchPostStats();
+  let localData: Awaited<ReturnType<typeof fetchWithLocalAPI>> = {
+    authors: [],
+    posts: [],
+    categories: [],
+    totalAuthors: 0,
+    totalPosts: 0,
+    totalCategories: 0,
+  };
+  let localError: string | null = null;
+
+  try {
+    localData = await fetchWithLocalAPI();
+  } catch (e) {
+    console.error("Local API error:", e);
+    localError =
+      "Payload is not started yet, or the database is unavailable. Start the dev server and ensure migrations can run.";
+  }
+
+  const graphqlData = await fetchWithGraphQL(baseUrl);
+  const postStats = await fetchPostStats(baseUrl);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -258,6 +286,15 @@ export default async function PayloadDashboard() {
           </div>
         </div>
       </header>
+
+      {localError && (
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-900 dark:border-yellow-900/40 dark:bg-yellow-950/40 dark:text-yellow-100">
+            <p className="font-semibold">Development note</p>
+            <p className="mt-1 text-sm">{localError}</p>
+          </div>
+        </div>
+      )}
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Stats Overview */}

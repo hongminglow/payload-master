@@ -8,3 +8,24 @@
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+/* Make the custom Save button visibly different */
+.custom-save-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.custom-save-button__icon {
+  width: 16px;
+  height: 16px;
+}
+
+.custom-save-button__badge {
+  font-size: 10px;
+  line-height: 1;
+  padding: 2px 6px;
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  opacity: 0.85;
+}
