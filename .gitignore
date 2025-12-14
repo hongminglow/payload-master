@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# payload sqlite db (generated at runtime)
+payload.sqlite
+payload.sqlite-*

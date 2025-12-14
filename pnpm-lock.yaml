@@ -9,14 +9,17 @@ importers:
   .:
     dependencies:
       '@payloadcms/db-sqlite':
-        specifier: ^3.68.1
+        specifier: ^3.68.2
         version: 3.68.2(payload@3.68.2(graphql@16.12.0)(typescript@5.9.3))
       '@payloadcms/next':
-        specifier: ^3.68.1
+        specifier: ^3.68.2
         version: 3.68.2(@types/react@19.2.7)(graphql@16.12.0)(monaco-editor@0.55.1)(next@15.4.8(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4))(payload@3.68.2(graphql@16.12.0)(typescript@5.9.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3)
       '@payloadcms/richtext-lexical':
-        specifier: ^3.68.1
+        specifier: ^3.68.2
         version: 3.68.2(@faceless-ui/modal@3.0.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(@faceless-ui/scroll-info@2.0.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(@payloadcms/next@3.68.2(@types/react@19.2.7)(graphql@16.12.0)(monaco-editor@0.55.1)(next@15.4.8(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4))(payload@3.68.2(graphql@16.12.0)(typescript@5.9.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3))(@types/react@19.2.7)(monaco-editor@0.55.1)(next@15.4.8(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4))(payload@3.68.2(graphql@16.12.0)(typescript@5.9.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3)(yjs@13.6.27)
+      '@payloadcms/translations':
+        specifier: ^3.68.2
+        version: 3.68.2
       '@payloadcms/ui':
         specifier: ^3.68.2
         version: 3.68.2(@types/react@19.2.7)(monaco-editor@0.55.1)(next@15.4.8(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4))(payload@3.68.2(graphql@16.12.0)(typescript@5.9.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3)
@@ -30,7 +33,7 @@ importers:
         specifier: 15.4.8
         version: 15.4.8(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4)
       payload:
-        specifier: ^3.68.1
+        specifier: ^3.68.2
         version: 3.68.2(graphql@16.12.0)(typescript@5.9.3)
       react:
         specifier: 19.2.1
@@ -6874,7 +6877,7 @@ snapshots:
   tsx@4.20.3:
     dependencies:
       esbuild: 0.25.12
-      get-tsconfig: 4.8.1
+      get-tsconfig: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
 

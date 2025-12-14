@@ -2,12 +2,15 @@ import sharp from "sharp";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
+import { en } from "@payloadcms/translations/languages/en";
+import { zh } from "@payloadcms/translations/languages/zh";
 import type {
   CollectionConfig,
   CollectionSlug,
   Endpoint,
   CollectionAfterChangeHook,
   CollectionBeforeChangeHook,
+  GlobalConfig,
 } from "payload";
 
 // ============================================================================
@@ -133,6 +136,29 @@ const healthEndpoint: Endpoint = {
 // COLLECTIONS
 // ============================================================================
 
+const siteSettingsGlobal: GlobalConfig = {
+  slug: "site-settings",
+  label: "Site Settings",
+  access: {
+    read: () => true,
+  },
+  fields: [
+    {
+      name: "siteName",
+      type: "text",
+      required: true,
+      localized: true,
+      defaultValue: "Payload Demo",
+    },
+    {
+      name: "tagline",
+      type: "text",
+      localized: true,
+      defaultValue: "A tiny demo of Payload + Next.js",
+    },
+  ],
+};
+
 const collections: CollectionConfig[] = [
   // ----------------------------------------------------------------------------
   // AUTHORS - Simple collection with hooks
@@ -141,11 +167,14 @@ const collections: CollectionConfig[] = [
     slug: "authors",
     labels: { singular: "Author", plural: "Authors" },
     admin: { useAsTitle: "name" },
+    access: {
+      read: () => true,
+    },
     hooks: {
       afterChange: [logAfterAuthorChange],
     },
     fields: [
-      { name: "name", type: "text", required: true },
+      { name: "name", type: "text", required: true, localized: true },
       { name: "bio", type: "textarea" },
       { name: "avatar", type: "text", label: "Avatar URL" },
     ],
@@ -158,8 +187,11 @@ const collections: CollectionConfig[] = [
     slug: "categories",
     labels: { singular: "Category", plural: "Categories" },
     admin: { useAsTitle: "title" },
+    access: {
+      read: () => true,
+    },
     fields: [
-      { name: "title", type: "text", required: true },
+      { name: "title", type: "text", required: true, localized: true },
       { name: "description", type: "textarea" },
       {
         name: "posts",
@@ -177,14 +209,24 @@ const collections: CollectionConfig[] = [
   {
     slug: "posts",
     labels: { singular: "Post", plural: "Posts" },
-    admin: { useAsTitle: "title" },
+    admin: {
+      useAsTitle: "title",
+      components: {
+        edit: {
+          SaveButton: "app/(payload)/components/CustomSaveButton#default",
+        },
+      },
+    },
+    access: {
+      read: () => true,
+    },
     hooks: {
       beforeChange: [logBeforePostChange],
       afterChange: [logAfterPostChange],
     },
     endpoints: [postsStatsEndpoint, publishAllEndpoint],
     fields: [
-      { name: "title", type: "text", required: true },
+      { name: "title", type: "text", required: true, localized: true },
       { name: "slug", type: "text", required: true, index: true, unique: true },
       { name: "excerpt", type: "textarea" },
       {
@@ -226,6 +268,9 @@ const collections: CollectionConfig[] = [
     admin: {
       useAsTitle: "title",
       description: "Demonstrates various Payload field types and components",
+    },
+    access: {
+      read: () => true,
     },
     fields: [
       // Group: Basic Fields
@@ -444,6 +489,35 @@ const collections: CollectionConfig[] = [
 export default buildConfig({
   editor: lexicalEditor(),
   collections,
+  globals: [siteSettingsGlobal],
+  localization: {
+    locales: [
+      { code: "en", label: "English" },
+      { code: "zh", label: "中文" },
+    ],
+    defaultLocale: "en",
+    fallback: true,
+  },
+  i18n: {
+    fallbackLanguage: "en",
+    supportedLanguages: {
+      en,
+      zh,
+    },
+    translations: {
+      zh: {
+        ...zh.translations,
+        general: {
+          ...zh.translations.general,
+          save: "保存",
+        },
+        authentication: {
+          ...zh.translations.authentication,
+          login: "登录",
+        },
+      },
+    },
+  },
   // Root-level custom endpoints
   endpoints: [healthEndpoint],
   admin: {
