@@ -9,6 +9,12 @@
   border: 0;
 }
 
+/* Hide only the header locale/language dropdown (localizer) */
+.app-header__localizer,
+.app-header__localizer-spacing {
+  display: none !important;
+}
+
 /* Make the custom Save button visibly different */
 .custom-save-button {
   display: inline-flex;

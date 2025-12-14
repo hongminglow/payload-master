@@ -15,7 +15,9 @@ type Props = {
 export default function CustomSaveButton({ label: labelProp }: Props) {
   const { uploadStatus } = useDocumentInfo();
   const { t } = useTranslation();
-  const { submit } = useForm() as unknown as { submit?: () => Promise<unknown> | void };
+  const { submit } = useForm() as unknown as {
+    submit?: () => Promise<unknown> | void;
+  };
   const modified = useFormModified();
   const editDepth = useEditDepth();
   const operation = useOperation();
